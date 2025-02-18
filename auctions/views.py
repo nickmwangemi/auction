@@ -80,4 +80,4 @@ class CreateListingView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         # Redirect back to the home page after creating a listing
-        return reverse_lazy("home")
+        return reverse("home")

@@ -1,5 +1,6 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
+
 
 class Auction(models.Model):
     auction_number = models.CharField(max_length=50, unique=True)
@@ -9,8 +10,11 @@ class Auction(models.Model):
     def __str__(self):
         return self.auction_number
 
+
 class Listing(models.Model):
-    auction = models.ForeignKey(Auction, on_delete=models.CASCADE, related_name='listings')
+    auction = models.ForeignKey(
+        Auction, on_delete=models.CASCADE, related_name="listings"
+    )
     title = models.CharField(max_length=100)
     description = models.TextField()
     base_price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -20,9 +24,10 @@ class Listing(models.Model):
     def __str__(self):
         return self.title
 
+
 class Bid(models.Model):
-    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='bids')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bids')
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bids")
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     timestamp = models.DateTimeField(auto_now_add=True)
 

@@ -31,5 +31,12 @@ class Bid(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+    @property
+    def is_below_base_price(self):
+        return self.amount < self.listing.base_price
+
     def __str__(self):
         return f"Bid by {self.user.username} on {self.listing.title}"

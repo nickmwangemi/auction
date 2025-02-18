@@ -1,7 +1,13 @@
 from django.urls import path
 
-from .views import (CreateListingView, HomeView, ListingDetailView,
-                    ListingListView, PlaceBidView, SetAuctionView)
+from .views import (
+    CreateListingView,
+    HomeView,
+    ListingDetailView,
+    ListingListView,
+    PlaceBidView,
+    SetAuctionView,
+)
 
 urlpatterns = [
     path("", HomeView.as_view(), name="home"),

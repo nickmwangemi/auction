@@ -4,6 +4,8 @@
 <p>Start Time: {{ listing.start_time }}</p>
 <p>End Time: {{ listing.end_time }}</p>
 
+<h2>Auction Status: {{ auction_status }}</h2>
+
 <h2>Offers Placed</h2>
 <ul>
     {% for bid in bids %}
@@ -18,11 +20,15 @@
     {% endfor %}
 </ul>
 
-<h2>Current Best Offer</h2>
-{% if current_best_offer %}
-    <p>KES. {{ current_best_offer.amount }} by {{ current_best_offer.user.username }}</p>
+<h2>Auction Results</h2>
+{% if auction_status == 'Ended' %}
+    {% if winning_bid %}
+        <p>Winning Bid: KES. {{ winning_bid.amount }} by {{ winning_bid.user.username }}</p>
+    {% else %}
+        <p>No bids were placed for this auction.</p>
+    {% endif %}
 {% else %}
-    <p>There is no current best offer.</p>
+    <p>The auction has not ended yet.</p>
 {% endif %}
 
 <a href="{% url 'place_bid' listing.id %}">Place Bid</a>

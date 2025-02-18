@@ -35,6 +35,11 @@ class PlaceBidView(LoginRequiredMixin, FormView):
     template_name = "auctions/place_bid.html"
     form_class = BidForm
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["listing"] = Listing.objects.get(pk=self.kwargs["listing_id"])
+        return context
+
     def form_valid(self, form):
         listing = get_object_or_404(Listing, id=self.kwargs["listing_id"])
         if timezone.now() < listing.start_time or timezone.now() > listing.end_time:

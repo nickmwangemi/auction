@@ -69,6 +69,12 @@ class HomeView(ListView):
         # Get auctions that are either upcoming or active
         return Auction.objects.filter(end_time__gte=timezone.now())
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        for auction in context['auctions']:
+            auction.status = auction.get_status()
+        return context
+
 
 class SetAuctionView(LoginRequiredMixin, CreateView):
     model = Auction

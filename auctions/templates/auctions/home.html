@@ -1,4 +1,15 @@
 <h1>Auctions</h1>
+<form method="get">
+    <label for="status">Filter by Status:</label>
+    <select id="status" name="status">
+        <option value="all">All</option>
+        <option value="upcoming">Upcoming</option>
+        <option value="active">Active</option>
+        <option value="ended">Ended</option>
+    </select>
+    <button type="submit">Filter</button>
+</form>
+
 <ul>
     {% for auction in auctions %}
         <li>
@@ -13,4 +24,3 @@
         </li>
     {% endfor %}
 </ul>
-<a href="{% url 'set_auction' %}">Set a New Auction</a>

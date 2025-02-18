@@ -20,7 +20,7 @@ class Auction(models.Model):
     def __str__(self):
         return self.auction_number
 
-    def update_status(self):
+    def get_status(self):
         now = timezone.now()
         if now < self.start_time:
             self.status = 'upcoming'

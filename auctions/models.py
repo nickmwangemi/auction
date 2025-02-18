@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
 from django.db import models
-
 from django.utils import timezone
 
 
@@ -20,7 +19,6 @@ class Auction(models.Model):
             return "Active"
         else:
             return "Ended"
-
 
 
 class Listing(models.Model):

@@ -30,11 +30,13 @@ class Bid(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bids")
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     timestamp = models.DateTimeField(auto_now_add=True)
-    is_below_base_price = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-        self.is_below_base_price = self.amount < self.listing.base_price
         super().save(*args, **kwargs)
+
+    @property
+    def is_below_base_price(self):
+        return self.amount < self.listing.base_price
 
     def __str__(self):
         return f"Bid by {self.user.username} on {self.listing.title}"

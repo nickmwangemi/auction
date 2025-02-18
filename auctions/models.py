@@ -1,5 +1,4 @@
 from django.contrib.auth.models import User
-from django.db import models
 from django.utils import timezone
 
 
@@ -48,6 +47,17 @@ class Listing(models.Model):
 
     def winning_bid(self):
         return bids.order_by('-amount').first() if (bids := self.bids.all()) else None
+
+    def get_time_progress(self):
+        if self.auction.status == 'upcoming':
+            return 0
+        elif self.auction.status == 'ended':
+            return 100
+
+        total_duration = (self.end_time - self.start_time).total_seconds()
+        elapsed = (timezone.now() - self.start_time).total_seconds()
+        progress = (elapsed / total_duration) * 100
+        return min(max(progress, 0), 100)
 
 
 class Bid(models.Model):

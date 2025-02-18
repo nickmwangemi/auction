@@ -35,10 +35,7 @@ class Listing(models.Model):
         return self.title
 
     def winning_bid(self):
-        bids = self.bids.all()
-        if bids:
-            return bids.order_by('-amount').first()
-        return None
+        return bids.order_by('-amount').first() if (bids := self.bids.all()) else None
 
 
 class Bid(models.Model):

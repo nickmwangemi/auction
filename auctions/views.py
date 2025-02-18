@@ -27,7 +27,7 @@ class ListingDetailView(DetailView):
         context["bids"] = bids
         context['current_best_offer'] = bids.order_by('-amount').first()
         context['winning_bid'] = listing.winning_bid()
-        context['auction_status'] = listing.auction.update_status()
+        context['auction_status'] = listing.auction.get_status()
         return context
 
 

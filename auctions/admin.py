@@ -1,30 +1,34 @@
-from django.db import models
-from django.contrib.auth.models import User
+from django.contrib import admin
+from .models import Auction, Listing, Bid
 
-class Auction(models.Model):
-    auction_number = models.CharField(max_length=50, unique=True)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+@admin.register(Auction)
+class AuctionAdmin(admin.ModelAdmin):
+    list_display = ('auction_number', 'start_time', 'end_time', 'listings_count')
+    search_fields = ('auction_number',)
+    ordering = ('start_time',)
 
-    def __str__(self):
-        return self.auction_number
+    # Inline display of related listings
+    def listings_count(self, obj):
+        return obj.listings.count()
+    listings_count.short_description = 'Listings Count'
 
-class Listing(models.Model):
-    auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
-    title = models.CharField(max_length=100)
-    description = models.TextField()
-    base_price = models.DecimalField(max_digits=10, decimal_places=2)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
 
-    def __str__(self):
-        return self.title
+@admin.register(Listing)
+class ListingAdmin(admin.ModelAdmin):
+    list_display = ('title', 'auction', 'base_price', 'start_time', 'end_time', 'bids_count')
+    search_fields = ('title', 'auction__auction_number')
+    list_filter = ('auction',)
+    ordering = ('start_time',)
 
-class Bid(models.Model):
-    listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    # Inline display of related bids
+    def bids_count(self, obj):
+        return obj.bids.count()
+    bids_count.short_description = 'Bids Count'
 
-    def __str__(self):
-        return f"Bid by {self.user.username} on {self.listing.title}"
+
+@admin.register(Bid)
+class BidAdmin(admin.ModelAdmin):
+    list_display = ('listing', 'user', 'amount', 'timestamp')
+    search_fields = ('listing__title', 'user__username')
+    list_filter = ('listing', 'user')
+    ordering = ('-timestamp',)

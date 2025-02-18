@@ -29,6 +29,7 @@ class Auction(models.Model):
         else:
             self.status = 'ended'
         self.save()
+        return self.status
 
 
 

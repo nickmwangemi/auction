@@ -102,7 +102,7 @@ class Command(BaseCommand):
         )
 
         self.stdout.write(
-            self.style.SUCCESS(f"""Successfully seeded the database with:
+            self.style.SUCCESS("""Successfully seeded the database with:
             - 2 upcoming auctions (UPC001, UPC002)
             - 2 active auctions (ACT001, ACT002)
             - 1 ended auction (END001)""")

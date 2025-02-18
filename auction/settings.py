@@ -10,26 +10,31 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
+
 from pathlib import Path
+
+import dj_database_url
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+# Support env variables from .env file if defined
+import os
+from dotenv import load_dotenv
+env_path = load_dotenv(os.path.join(BASE_DIR, '.env'))
+load_dotenv(env_path)
+
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-DEBUG = os.environ.get("DJANGO_DEBUG", "true") == "true"
-
-if DEBUG:
-    SECRET_KEY = "django-insecure-$4)*k9*6=!l+hr!_5a420@ar%-^p87i(!zynwvgi76s1e2+%26"
-else:
-    SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
-
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-$4)*k9*6=!l+hr!_5a420@ar%-^p87i(!zynwvgi76s1e2+%26")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
+
 
 ALLOWED_HOSTS = ["*"]
 
@@ -50,6 +55,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -81,15 +87,22 @@ WSGI_APPLICATION = "auction.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+default_db_url = "postgres://auction:auction@localhost:5432/auction"
+default_db_config = dj_database_url.config(default=default_db_url)
+
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": default_db_config,
 }
+CONN_MAX_AGE = int(os.environ.get("CONN_MAX_AGE", 0))
 
+# Update database configuration from $DATABASE_URL environment variable (if defined)
 
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = default_db_url.config(
+        conn_max_age=500,
+        conn_health_checks=True,
+    )
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -123,6 +136,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 
 STATIC_URL = "static/"
 
@@ -130,3 +145,14 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+
+# Static file serving.
+# https://whitenoise.readthedocs.io/en/stable/django.html#add-compression-and-caching-support
+STORAGES = {
+    # ...
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}

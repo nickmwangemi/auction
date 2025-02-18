@@ -1,7 +1,24 @@
 <h1>{{ listing.title }}</h1>
 <p>{{ listing.description }}</p>
-<p>Base Price: {{ listing.base_price }}</p>
+<p>Base Price: KES. {{ listing.base_price }}</p>
 <p>Start Time: {{ listing.start_time }}</p>
 <p>End Time: {{ listing.end_time }}</p>
-<p>Current Best Offer: {{ current_best_offer.amount }} by {{ current_best_offer.user.username }}</p>
+
+<h2>Offers Placed</h2>
+<ul>
+    {% for bid in bids %}
+        <li>{{ bid.amount }} by {{ bid.user.username }} on {{ bid.timestamp }}</li>
+    {% empty %}
+        <li>No offers have been placed yet.</li>
+    {% endfor %}
+</ul>
+
+<h2>Current Best Offer</h2>
+{% if current_best_offer %}
+    <p>KES. {{ current_best_offer.amount }} by {{ current_best_offer.user.username }}</p>
+{% else %}
+    <p>There is no current best offer.</p>
+{% endif %}
+
 <a href="{% url 'place_bid' listing.id %}">Place Bid</a>
+<a href="{% url 'home' %}">Back to Auctions</a>

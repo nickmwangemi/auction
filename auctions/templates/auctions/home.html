@@ -5,7 +5,9 @@
             <h2>{{ auction.auction_number }}</h2>
             <ul>
                 {% for listing in auction.listings.all %}
-                    <li>{{ listing.title }} - ${{ listing.base_price }}</li>
+                    <li>
+                        <a href="{% url 'listing_detail' listing.id %}">{{ listing.title }}</a> - KES. {{ listing.base_price }}
+                    </li>
                 {% endfor %}
             </ul>
         </li>

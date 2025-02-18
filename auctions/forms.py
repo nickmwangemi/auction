@@ -1,4 +1,5 @@
 from django import forms
+from django.utils import timezone
 
 from .models import Auction, Listing
 
@@ -12,8 +13,8 @@ class AuctionForm(forms.ModelForm):
         model = Auction
         fields = ["auction_number", "start_time", "end_time"]
         widgets = {
-            'start_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-            'end_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            "start_time": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+            "end_time": forms.DateTimeInput(attrs={"type": "datetime-local"}),
         }
 
 
@@ -29,5 +30,14 @@ class ListingForm(forms.ModelForm):
             "end_time",
         ]
         widgets = {
-            "auction": forms.HiddenInput(),  # Hide the auction field
+            "start_time": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+            "end_time": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+            "auction": forms.Select(),  # Dropdown for auction selection
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Populate the auction dropdown with active auctions
+        self.fields["auction"].queryset = Auction.objects.filter(
+            end_time__gte=timezone.now()
+        )

@@ -1,0 +1,7 @@
+<h1>{{ listing.title }}</h1>
+<p>{{ listing.description }}</p>
+<p>Base Price: {{ listing.base_price }}</p>
+<p>Start Time: {{ listing.start_time }}</p>
+<p>End Time: {{ listing.end_time }}</p>
+<p>Current Best Offer: {{ current_best_offer.amount }} by {{ current_best_offer.user.username }}</p>
+<a href="{% url 'place_bid' listing.id %}">Place Bid</a>

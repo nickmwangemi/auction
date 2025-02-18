@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -35,13 +36,28 @@ class PlaceBidView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         listing = get_object_or_404(Listing, id=self.kwargs["listing_id"])
-        Bid.objects.create(
+        if timezone.now() < listing.start_time or timezone.now() > listing.end_time:
+            messages.error(
+                self.request, "Bidding is not allowed outside the trading window."
+            )
+            return self.form_invalid(form)
+
+        bid = Bid.objects.create(
             listing=listing, user=self.request.user, amount=form.cleaned_data["amount"]
         )
+
+        if bid.is_below_base_price:
+            messages.warning(
+                self.request,
+                "Your bid is below the base price and may not be considered a winning bid.",
+            )
+        else:
+            messages.success(self.request, "Your bid has been placed successfully.")
+
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("listing_detail", kwargs={"pk": self.kwargs["listing_id"]})
+        return reverse_lazy("listing_detail", kwargs={"pk": self.kwargs["listing_id"]})
 
 
 class HomeView(ListView):

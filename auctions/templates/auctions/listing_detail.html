@@ -7,7 +7,12 @@
 <h2>Offers Placed</h2>
 <ul>
     {% for bid in bids %}
-        <li>{{ bid.amount }} by {{ bid.user.username }} on {{ bid.timestamp }}</li>
+        <li>
+            KES. {{ bid.amount }} by {{ bid.user.username }} on {{ bid.timestamp }}
+            {% if bid.is_below_base_price %}
+                <span style="color: red;">(Below Base Price)</span>
+            {% endif %}
+        </li>
     {% empty %}
         <li>No offers have been placed yet.</li>
     {% endfor %}

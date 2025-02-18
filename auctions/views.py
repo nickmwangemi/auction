@@ -23,10 +23,11 @@ class ListingDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         listing = self.get_object()
-        bids = Bid.objects.filter(listing=listing)
-        current_best_offer = bids.order_by("-amount").first()
+        bids = listing.bids.all()
         context["bids"] = bids
-        context["current_best_offer"] = current_best_offer
+        context['current_best_offer'] = bids.order_by('-amount').first()
+        context['winning_bid'] = listing.winning_bid()
+        context['auction_status'] = listing.auction.get_status()
         return context
 
 

@@ -5,7 +5,7 @@
 <p>End Time: {{ listing.end_time }}</p>
 <p>Available Volume: 1</p>
 
-<h2>Auction Status: {{ listing.auction.status }}</h2>
+<h2>Auction Status: {{ listing.auction.get_status_display }}</h2>
 
 <h2>Offers Placed</h2>
 <ul>

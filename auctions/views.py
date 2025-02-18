@@ -37,7 +37,7 @@ class PlaceBidView(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["listing"] = Listing.objects.get(pk=self.kwargs["listing_id"])
+        context["listing"] = get_object_or_404(Listing, id=self.kwargs["listing_id"])
         return context
 
     def form_valid(self, form):

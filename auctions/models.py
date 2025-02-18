@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
 
 class Auction(models.Model):
@@ -9,6 +10,15 @@ class Auction(models.Model):
 
     def __str__(self):
         return self.auction_number
+
+    def get_status(self):
+        now = timezone.now()
+        if now < self.start_time:
+            return "Upcoming"
+        elif self.start_time <= now <= self.end_time:
+            return "Active"
+        else:
+            return "Ended"
 
 
 class Listing(models.Model):

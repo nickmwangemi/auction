@@ -1,8 +1,8 @@
-<h1>Active Auctions</h1>
+<h1>Auctions</h1>
 <ul>
     {% for auction in auctions %}
         <li>
-            <h2>{{ auction.auction_number }}</h2>
+            <h2>{{ auction.auction_number }} - <span style="font-weight: bold; color: {% if auction.status == 'Upcoming' %}blue{% elif auction.status == 'Active' %}green{% else %}red{% endif %};">{{ auction.status }}</span></h2>
             <ul>
                 {% for listing in auction.listings.all %}
                     <li>

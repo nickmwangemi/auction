@@ -34,6 +34,12 @@ class Listing(models.Model):
     def __str__(self):
         return self.title
 
+    def winning_bid(self):
+        bids = self.bids.all()
+        if bids:
+            return bids.order_by('-amount').first()
+        return None
+
 
 class Bid(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids")

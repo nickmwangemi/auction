@@ -2,10 +2,10 @@
 <form method="get">
     <label for="status">Filter by Status:</label>
     <select id="status" name="status">
-        <option value="all">All</option>
-        <option value="upcoming">Upcoming</option>
-        <option value="active">Active</option>
-        <option value="ended">Ended</option>
+        <option value="all" {% if not request.GET.status %}selected{% endif %}>All</option>
+        <option value="upcoming" {% if request.GET.status == 'upcoming' %}selected{% endif %}>Upcoming</option>
+        <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Active</option>
+        <option value="ended" {% if request.GET.status == 'ended' %}selected{% endif %}>Ended</option>
     </select>
     <button type="submit">Filter</button>
 </form>
@@ -13,7 +13,7 @@
 <ul>
     {% for auction in auctions %}
         <li>
-            <h2>{{ auction.auction_number }} - <span style="font-weight: bold; color: {% if auction.status == 'Upcoming' %}blue{% elif auction.status == 'Active' %}green{% else %}red{% endif %};">{{ auction.status }}</span></h2>
+            <h2>{{ auction.auction_number }} - <span style="font-weight: bold; color: {% if auction.status == 'upcoming' %}blue{% elif auction.status == 'active' %}green{% else %}red{% endif %};">{{ auction.get_status_display }}</span></h2>
             <ul>
                 {% for listing in auction.listings.all %}
                     <li>
@@ -22,5 +22,7 @@
                 {% endfor %}
             </ul>
         </li>
+    {% empty %}
+        <li>No auctions available based on the selected filter.</li>
     {% endfor %}
 </ul>

@@ -3,22 +3,33 @@ from django.db import models
 from django.utils import timezone
 
 
+from django.db import models
+
 class Auction(models.Model):
+    AUCTION_STATUS_CHOICES = [
+        ('upcoming', 'Upcoming'),
+        ('active', 'Active'),
+        ('ended', 'Ended'),
+    ]
+
     auction_number = models.CharField(max_length=50, unique=True)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
+    status = models.CharField(max_length=10, choices=AUCTION_STATUS_CHOICES, default='upcoming')
 
     def __str__(self):
         return self.auction_number
 
-    def get_status(self):
+    def update_status(self):
         now = timezone.now()
         if now < self.start_time:
-            return "Upcoming"
+            self.status = 'upcoming'
         elif self.start_time <= now <= self.end_time:
-            return "Active"
+            self.status = 'active'
         else:
-            return "Ended"
+            self.status = 'ended'
+        self.save()
+
 
 
 class Listing(models.Model):

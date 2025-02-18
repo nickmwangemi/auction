@@ -41,7 +41,7 @@ class PlaceBidView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy("listing_detail", kwargs={"pk": self.kwargs["listing_id"]})
+        return reverse("listing_detail", kwargs={"pk": self.kwargs["listing_id"]})
 
 
 class HomeView(ListView):

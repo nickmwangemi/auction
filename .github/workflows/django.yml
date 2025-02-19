@@ -1,14 +1,13 @@
-name: Django CI
+name: Django CI and Deploy
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
@@ -17,6 +16,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
@@ -34,6 +34,36 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+
     - name: Run Tests
       run: |
         python manage.py test
+
+    - name: Deploy to PythonAnywhere
+      env:
+        PYTHONANYWHERE_USERNAME: ${{ secrets.PYTHONANYWHERE_USERNAME }}
+        PYTHONANYWHERE_PASSWORD: ${{ secrets.PYTHONANYWHERE_PASSWORD }}
+        PYTHONANYWHERE_HOST: ${{ secrets.PYTHONANYWHERE_HOST }}
+      run: |
+        # Install SSH client
+        sudo apt-get update
+        sudo apt-get install -y openssh-client
+
+        # Set up SSH key for PythonAnywhere
+        ssh-keygen -t rsa -b 4096 -f /home/runner/.ssh/id_rsa -N ""
+        ssh-keyscan $PYTHONANYWHERE_HOST >> /home/runner/.ssh/known_hosts
+
+        # Copy the SSH key to PythonAnywhere
+        sshpass -p $PYTHONANYWHERE_PASSWORD scp /home/runner/.ssh/id_rsa.pub $PYTHONANYWHERE_USERNAME@$PYTHONANYWHERE_HOST:~/.ssh/authorized_keys
+
+        # Deploy the application
+        sshpass -p $PYTHONANYWHERE_PASSWORD ssh $PYTHONANYWHERE_USERNAME@$PYTHONANYWHERE_HOST << 'EOF'
+        cd /home/nickmwangemi/nickmwangemi.pythonanywhere.com
+        git pull origin main
+        source venv/bin/activate
+        pip install -r requirements.txt
+        python manage.py migrate
+        python manage.py collectstatic --noinput
+        touch mysite_uwsgi.ini
+        reload mysite
+        EOF

@@ -29,11 +29,16 @@
                         {% endif %}
                     </p>
                     <ul class="listing-list">
+                    {% if not auction.listings.count %}
+                        <li>No listings available.</li>
+                    {% else %}
+                        <span>{{ auction.listings.count }} listing{{ auction.listings.count|pluralize:'s' }} available.</span>
                         {% for listing in auction.listings.all %}
                             <li class="listing-item">
                                 <a href="{% url 'listing_detail' listing.id %}">{{ listing.title }}</a> - KES. {{ listing.base_price }}
                             </li>
                         {% endfor %}
+                    {% endif %}
                     </ul>
                 </div>
             {% endfor %}

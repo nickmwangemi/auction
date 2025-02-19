@@ -1,11 +1,61 @@
 {% extends "auctions/base.html" %}
 
 {% block content %}
+<div class="create-auction-page">
+    <h1>Set a New Auction</h1>
 
-<h1>Set a New Auction</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create Auction</button>
-</form>
+    <!-- Backlink to the homepage or auction list -->
+    <div class="backlink">
+        <a href="{% url 'home' %}">Back to Auctions</a>
+    </div>
+
+    <form method="post" class="auction-form">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="submit-button">Create Auction</button>
+    </form>
+</div>
+
+<style>
+    .create-auction-page {
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .backlink {
+        margin-bottom: 20px;
+        text-align: right;
+    }
+    .backlink a {
+        text-decoration: none;
+        color: #007bff;
+    }
+    .backlink a:hover {
+        text-decoration: underline;
+    }
+    .auction-form {
+        display: flex;
+        flex-direction: column;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .submit-button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    .submit-button:hover {
+        background-color: #0056b3;
+    }
+</style>
 {% endblock %}

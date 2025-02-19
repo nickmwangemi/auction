@@ -22,7 +22,6 @@ class ListingForm(forms.ModelForm):
     class Meta:
         model = Listing
         fields = [
-            "auction",
             "title",
             "description",
             "base_price",
@@ -37,7 +36,3 @@ class ListingForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Populate the auction dropdown with active auctions
-        self.fields["auction"].queryset = Auction.objects.filter(
-            end_time__gte=timezone.now()
-        )

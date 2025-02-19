@@ -3,6 +3,7 @@
 {% block content %}
 <div class="auction-page">
     <h1>Auctions</h1>
+
     <form method="get" class="filter-form">
         <label for="status">Filter by Status:</label>
         <select id="status" name="status" class="status-select">
@@ -18,7 +19,13 @@
         {% if auctions %}
             {% for auction in auctions %}
                 <div class="auction-item">
-                    <h2>{{ auction.auction_number }} - <span style="font-weight: bold; color: {% if auction.status == 'upcoming' %}blue{% elif auction.status == 'active' %}green{% else %}red{% endif %};">{{ auction.get_status_display }}</span></h2>
+                    <div class="auction-header">
+                        <h2>
+                        <a href="{% url 'auction_detail' auction.id %}">{{ auction.auction_number }}</a> - <span style="font-weight: bold; color: {% if auction.status == 'upcoming' %}blue{% elif auction.status == 'active' %}green{% else %}red{% endif %};">{{ auction.get_status_display }}</span></h2>
+                        {% if auction.status == 'upcoming' or auction.status == 'active' %}
+                            <a href="{% url 'create_listing' auction.id %}" class="create-auction-link">Set Auction</a>
+                        {% endif %}
+                    </div>
                     <p>
                         {% if auction.status == 'upcoming' %}
                             Starts: {{ auction.start_time|date:"M d, Y H:i" }}
@@ -29,16 +36,16 @@
                         {% endif %}
                     </p>
                     <ul class="listing-list">
-                    {% if not auction.listings.count %}
-                        <li>No listings available.</li>
-                    {% else %}
-                        <span>{{ auction.listings.count }} listing{{ auction.listings.count|pluralize:'s' }} available.</span>
-                        {% for listing in auction.listings.all %}
-                            <li class="listing-item">
-                                <a href="{% url 'listing_detail' listing.id %}">{{ listing.title }}</a> - KES. {{ listing.base_price }}
-                            </li>
-                        {% endfor %}
-                    {% endif %}
+                        {% if not auction.listings.count %}
+                            <li>No listings available.</li>
+                        {% else %}
+                            <span>{{ auction.listings.count }} listing{{ auction.listings.count|pluralize:'s' }} available.</span>
+                            {% for listing in auction.listings.all %}
+                                <li class="listing-item">
+                                    <a href="{% url 'listing_detail' listing.id %}">{{ listing.title }}</a> - KES. {{ listing.base_price }}
+                                </li>
+                            {% endfor %}
+                        {% endif %}
                     </ul>
                 </div>
             {% endfor %}
@@ -53,6 +60,23 @@
         max-width: 800px;
         margin: auto;
         padding: 20px;
+    }
+    .auction-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .create-auction-link {
+        padding: 5px 10px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        margin-left: 10px;
+    }
+    .create-auction-link:hover {
+        background-color: #0056b3;
     }
     .filter-form {
         margin-bottom: 20px;

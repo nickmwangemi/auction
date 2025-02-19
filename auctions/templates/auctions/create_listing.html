@@ -1,12 +1,91 @@
 {% extends "auctions/base.html" %}
 
 {% block content %}
+<div class="create-listing-page">
+    <h1>Create a Listing for Auction: {{ auction.auction_number }}</h1>
 
-<h1>Create a Listing for Auction: {{ form.instance.auction.auction_number }}</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create Listing</button>
-</form>
+    <!-- Link to the auctions page -->
+    <div class="navigation-links">
+        <a href="{% url 'home' %}" class="nav-link">View All Auctions</a>
+        <a href="{% url 'auction_detail' view.kwargs.auction_id %}" class="nav-link">Back to Auction Details</a>
+    </div>
 
+    <!-- Display Auction Status -->
+    <div class="auction-status">
+        <p>Auction Status:
+            <span class="status-label {% if auction.status == 'upcoming' %}status-upcoming{% elif auction.status == 'active' %}status-active{% else %}status-ended{% endif %}">
+                {{ auction.get_status_display }}
+            </span>
+        </p>
+    </div>
+
+    <form method="post" class="listing-form">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="submit-button">Create Listing</button>
+    </form>
+</div>
+
+<style>
+    .create-listing-page {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
+    }
+    .navigation-links {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+    .nav-link {
+        text-decoration: none;
+        color: #007bff;
+        font-weight: bold;
+    }
+    .nav-link:hover {
+        text-decoration: underline;
+    }
+    .auction-status {
+        margin-bottom: 20px;
+        font-size: 18px;
+    }
+    .status-label {
+        font-weight: bold;
+    }
+    .status-upcoming {
+        color: blue;
+    }
+    .status-active {
+        color: green;
+    }
+    .status-ended {
+        color: red;
+    }
+    .listing-form {
+        display: flex;
+        flex-direction: column;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .submit-button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        align-self: center;
+    }
+    .submit-button:hover {
+        background-color: #0056b3;
+    }
+</style>
 {% endblock %}

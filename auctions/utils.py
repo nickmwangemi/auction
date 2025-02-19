@@ -14,7 +14,7 @@ def send_auction_completion_message(
 
     # Message content
     message = (
-        f"Auction Completed!\n"
+        "Auction Completed!\n"
         f"Auction ID: {auction_id}\n"
         f"Item: {item_description}\n"
         f"Winning Bid: {winning_bid}\n"

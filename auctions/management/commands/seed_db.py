@@ -12,10 +12,14 @@ class Command(BaseCommand):
     help = "Seed the database with initial data for different auction statuses"
 
     def handle(self, *args, **kwargs):
-        # Create users
+        # Create or get users
         users = [
-            User.objects.create_user(username="user1", password="password1"),
-            User.objects.create_user(username="user2", password="password2"),
+            User.objects.get_or_create(
+                username="user1", defaults={"password": "password1"}
+            )[0],
+            User.objects.get_or_create(
+                username="user2", defaults={"password": "password2"}
+            )[0],
         ]
 
         # List of car data
@@ -49,65 +53,64 @@ class Command(BaseCommand):
 
         now = timezone.now()
 
-        # Create upcoming auctions
-        for i in range(2):
-            start_time = now + timedelta(days=i + 1)
-            auction = Auction.objects.create(
-                auction_number=f"UPC00{i+1}",
-                start_time=start_time,
-                end_time=start_time + timedelta(days=7),
-                status="upcoming",
-            )
+        # Function to create listings
+        def create_listings(auction, status, start_offset, end_offset):
+            for _ in range(20):  # Create 20 listings per auction
+                car = random.choice(car_data)
+                start_time = now + timedelta(days=start_offset)
+                end_time = start_time + timedelta(days=7 + end_offset)
+                Listing.objects.create(
+                    auction=auction,
+                    title=car["title"],
+                    description=car["description"],
+                    base_price=car["base_price"],
+                    start_time=start_time,
+                    end_time=end_time,
+                )
 
-            Listing.objects.create(
-                auction=auction,
-                title=car_data[i]["title"],
-                description=car_data[i]["description"],
-                base_price=car_data[i]["base_price"],
-                start_time=start_time,
-                end_time=start_time + timedelta(days=7),
+        # Create upcoming auctions
+        for i in range(4):  # Create 4 upcoming auctions
+            start_time = now + timedelta(days=i + 1)
+            auction, created = Auction.objects.get_or_create(
+                auction_number=f"UPC00{i+1}",
+                defaults={
+                    "start_time": start_time,
+                    "end_time": start_time + timedelta(days=7),
+                    "status": "upcoming",
+                },
             )
+            create_listings(auction, "upcoming", i + 1, 0)
 
         # Create active auctions
-        for i in range(2):
-            auction = Auction.objects.create(
+        for i in range(4):  # Create 4 active auctions
+            auction, created = Auction.objects.get_or_create(
                 auction_number=f"ACT00{i+1}",
-                start_time=now - timedelta(days=1),
-                end_time=now + timedelta(days=5 + i),
-                status="active",
+                defaults={
+                    "start_time": now - timedelta(days=1),
+                    "end_time": now + timedelta(days=5 + i),
+                    "status": "active",
+                },
             )
-
-            Listing.objects.create(
-                auction=auction,
-                title=car_data[i + 2]["title"],
-                description=car_data[i + 2]["description"],
-                base_price=car_data[i + 2]["base_price"],
-                start_time=now - timedelta(days=1),
-                end_time=now + timedelta(days=5 + i),
-            )
+            create_listings(auction, "active", -1, i)
 
         # Create ended auctions
-        auction = Auction.objects.create(
-            auction_number="END001",
-            start_time=now - timedelta(days=10),
-            end_time=now - timedelta(days=3),
-            status="ended",
-        )
-
-        Listing.objects.create(
-            auction=auction,
-            title=car_data[4]["title"],
-            description=car_data[4]["description"],
-            base_price=car_data[4]["base_price"],
-            start_time=now - timedelta(days=10),
-            end_time=now - timedelta(days=3),
-        )
+        for i in range(2):  # Create 2 ended auctions
+            auction, created = Auction.objects.get_or_create(
+                auction_number=f"END00{i+1}",
+                defaults={
+                    "start_time": now - timedelta(days=10 + i),
+                    "end_time": now - timedelta(days=3 + i),
+                    "status": "ended",
+                },
+            )
+            create_listings(auction, "ended", -10 - i, 0)
 
         self.stdout.write(
             self.style.SUCCESS(
                 """Successfully seeded the database with:
-            - 2 upcoming auctions (UPC001, UPC002)
-            - 2 active auctions (ACT001, ACT002)
-            - 1 ended auction (END001)"""
+            - 4 upcoming auctions (UPC001-UPC004)
+            - 4 active auctions (ACT001-ACT004)
+            - 2 ended auctions (END001-END002)
+            Each auction has 20 listings."""
             )
         )

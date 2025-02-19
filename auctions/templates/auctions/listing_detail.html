@@ -1,56 +1,115 @@
 {% extends "auctions/base.html" %}
 
 {% block content %}
+<div class="listing-detail-page">
+    <h1>{{ listing.title }}</h1>
+    <p>{{ listing.description }}</p>
+    <p><strong>Base Price:</strong> KES. {{ listing.base_price }}</p>
+    <p><strong>Start Time:</strong> {{ listing.start_time }}</p>
+    <p><strong>End Time:</strong> {{ listing.end_time }}</p>
+    <p><strong>Available Volume:</strong> 1</p>
 
-<h1>{{ listing.title }}</h1>
-<p>{{ listing.description }}</p>
-<p>Base Price: KES. {{ listing.base_price }}</p>
-<p>Start Time: {{ listing.start_time }}</p>
-<p>End Time: {{ listing.end_time }}</p>
-<p>Available Volume: 1</p>
+    <h2>Auction Status:
+        <span class="status-label {% if listing.auction.status == 'upcoming' %}status-upcoming{% elif listing.auction.status == 'active' %}status-active{% else %}status-ended{% endif %}">
+            {{ listing.auction.get_status_display }}
+        </span>
+    </h2>
 
-<h2>Auction Status: {{ listing.auction.get_status_display }}</h2>
-
-<h2>Offers Placed</h2>
-<table style="width:100%; border-collapse: collapse;">
-    <thead>
-        <tr>
-            <th style="border: 1px solid black; padding: 8px;">Amount</th>
-            <th style="border: 1px solid black; padding: 8px;">Bidder</th>
-            <th style="border: 1px solid black; padding: 8px;">Timestamp</th>
-            <th style="border: 1px solid black; padding: 8px;">Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for bid in bids %}
+    <h2>Offers Placed</h2>
+    <table class="offers-table">
+        <thead>
             <tr>
-                <td style="border: 1px solid black; padding: 8px;">KES. {{ bid.amount }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ bid.user.username }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ bid.timestamp }}</td>
-                <td style="border: 1px solid black; padding: 8px;">
-                    {% if bid.is_below_base_price %}
-                        <span style="color: red;">Below Base Price</span>
-                    {% else %}
-                        Acceptable
-                    {% endif %}
-                </td>
+                <th>Amount</th>
+                <th>Bidder</th>
+                <th>Timestamp</th>
+                <th>Status</th>
             </tr>
-        {% empty %}
-            <tr>
-                <td colspan="4" style="border: 1px solid black; padding: 8px; text-align: center;">No offers have been placed yet.</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            {% for bid in bids %}
+                <tr>
+                    <td>KES. {{ bid.amount }}</td>
+                    <td>{{ bid.user.username }}</td>
+                    <td>{{ bid.timestamp }}</td>
+                    <td>
+                        {% if bid.is_below_base_price %}
+                            <span class="status-below-base">Below Base Price</span>
+                        {% else %}
+                            Acceptable
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4" class="no-offers">No offers have been placed yet.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-<h2>Current Best Offer</h2>
-{% if current_best_offer %}
-    <p>KES. {{ current_best_offer.amount }} by {{ current_best_offer.user.username }}</p>
-{% else %}
-    <p>There is no current best offer.</p>
-{% endif %}
+    <h2>Current Best Offer</h2>
+    {% if current_best_offer %}
+        <p>KES. {{ current_best_offer.amount }} by {{ current_best_offer.user.username }}</p>
+    {% else %}
+        <p>There is no current best offer.</p>
+    {% endif %}
 
-<a href="{% url 'place_bid' listing.id %}">Place Bid</a>
-<a href="{% url 'home' %}">Back to Auctions</a>
+    <!-- Navigation Links -->
+    <div class="navigation-links">
+        {% if not listing.auction.status == 'ended' %}
+            <a href="{% url 'place_bid' listing.id %}" class="nav-link">Place Bid</a>
+        {% endif %}
+        <a href="{% url 'home' %}" class="nav-link">Back to Auctions</a>
+        <a href="{% url 'auction_detail' listing.auction.id %}" class="nav-link">Back to Auction Details</a>
+    </div>
+</div>
 
+<style>
+    .listing-detail-page {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+    }
+    .navigation-links {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+    .nav-link {
+        text-decoration: none;
+        color: #007bff;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+    .nav-link:hover {
+        text-decoration: underline;
+    }
+    .offers-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .offers-table th, .offers-table td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+    }
+    .status-label {
+        font-weight: bold;
+    }
+    .status-upcoming {
+        color: blue;
+    }
+    .status-active {
+        color: green;
+    }
+    .status-ended {
+        color: red;
+    }
+    .status-below-base {
+        color: red;
+    }
+    .no-offers {
+        text-align: center;
+    }
+</style>
 {% endblock %}

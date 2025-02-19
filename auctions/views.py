@@ -100,9 +100,47 @@ class CreateListingView(LoginRequiredMixin, CreateView):
     def get_initial(self):
         # Set the initial auction based on the URL parameter
         initial = super().get_initial()
-        initial["auction"] = Auction.objects.get(id=self.kwargs["auction_id"])
+        initial["auction"] = self.get_auction()
         return initial
+
+    def get_auction(self):
+        if not hasattr(self, "_auction"):
+            self._auction = get_object_or_404(Auction, id=self.kwargs["auction_id"])
+        return self._auction
+
+    def form_valid(self, form):
+        # Retrieve the auction associated with the listing
+        auction = Auction.objects.get(id=self.kwargs["auction_id"])
+
+        # Check if the auction has ended
+        if auction.end_time < timezone.now():
+            messages.error(
+                self.request, "You cannot create a listing for an ended auction."
+            )
+            return self.form_invalid(form)
+
+        # Set the auction field programmatically
+        form.instance.auction = auction
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["auction"] = self.get_auction()
+        return context
 
     def get_success_url(self):
         # Redirect back to the home page after creating a listing
         return reverse("home")
+
+
+class AuctionDetailView(DetailView):
+    model = Auction
+    template_name = "auctions/auction_detail.html"
+    context_object_name = "auction"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        auction = self.get_object()
+        context["listings"] = auction.listings.all()
+        context["auction_status"] = auction.get_status()
+        return context

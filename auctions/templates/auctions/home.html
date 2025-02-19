@@ -19,6 +19,15 @@
             {% for auction in auctions %}
                 <div class="auction-item">
                     <h2>{{ auction.auction_number }} - <span style="font-weight: bold; color: {% if auction.status == 'upcoming' %}blue{% elif auction.status == 'active' %}green{% else %}red{% endif %};">{{ auction.get_status_display }}</span></h2>
+                    <p>
+                        {% if auction.status == 'upcoming' %}
+                            Starts: {{ auction.start_time|date:"M d, Y H:i" }}
+                        {% elif auction.status == 'active' %}
+                            Started: {{ auction.start_time|date:"M d, Y H:i" }} - Ends: {{ auction.end_time|date:"M d, Y H:i" }}
+                        {% else %}
+                            Started: {{ auction.start_time|date:"M d, Y H:i" }} - Ended: {{ auction.end_time|date:"M d, Y H:i" }}
+                        {% endif %}
+                    </p>
                     <ul class="listing-list">
                         {% for listing in auction.listings.all %}
                             <li class="listing-item">

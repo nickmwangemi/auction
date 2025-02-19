@@ -1,0 +1,82 @@
+{% extends "auctions/base.html" %}
+
+{% block content %}
+<div class="auction-detail-page">
+    <h1>Auction Detail: {{ auction.auction_number }}</h1>
+
+    <!-- Navigation Links -->
+    <div class="navigation-links">
+        <a href="{% url 'home' %}" class="nav-link">Back to Auctions</a>
+        {% if auction.status == 'upcoming' or auction.status == 'active' %}
+            <a href="{% url 'create_listing' auction.id %}" class="nav-link">Create a Listing</a>
+        {% endif %}
+    </div>
+
+    <div class="auction-info">
+        <p><strong>Status:</strong> <span class="status-label {% if auction.status == 'upcoming' %}status-upcoming{% elif auction.status == 'active' %}status-active{% else %}status-ended{% endif %}">{{ auction.get_status_display }}</span></p>
+        <p><strong>Start Time:</strong> {{ auction.start_time|date:"M d, Y H:i" }}</p>
+        <p><strong>End Time:</strong> {{ auction.end_time|date:"M d, Y H:i" }}</p>
+    </div>
+
+    <h2>Listings</h2>
+    {% if listings %}
+         <ul class="listing-list">
+            {% if not auction.listings.count %}
+                <li>No listings available.</li>
+            {% else %}
+                <span>{{ auction.listings.count }} listing{{ auction.listings.count|pluralize:'s' }} available.</span>
+                {% for listing in auction.listings.all %}
+                    <li class="listing-item">
+                        <a href="{% url 'listing_detail' listing.id %}">{{ listing.title }}</a> - KES. {{ listing.base_price }}
+                    </li>
+                {% endfor %}
+            {% endif %}
+        </ul>
+    {% else %}
+        <p>No listings available for this auction.</p>
+    {% endif %}
+</div>
+
+<style>
+    .auction-detail-page {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+    }
+    .navigation-links {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+    .nav-link {
+        text-decoration: none;
+        color: #007bff;
+        font-weight: bold;
+    }
+    .nav-link:hover {
+        text-decoration: underline;
+    }
+    .auction-info {
+        margin-bottom: 20px;
+    }
+    .status-label {
+        font-weight: bold;
+    }
+    .status-upcoming {
+        color: blue;
+    }
+    .status-active {
+        color: green;
+    }
+    .status-ended {
+        color: red;
+    }
+    .listing-list {
+        list-style-type: none;
+        padding: 0;
+    }
+    .listing-item {
+        margin: 5px 0;
+    }
+</style>
+{% endblock %}

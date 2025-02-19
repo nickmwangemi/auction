@@ -1,28 +1,80 @@
-<h1>Auctions</h1>
-<form method="get">
-    <label for="status">Filter by Status:</label>
-    <select id="status" name="status">
-        <option value="all" {% if not request.GET.status %}selected{% endif %}>All</option>
-        <option value="upcoming" {% if request.GET.status == 'upcoming' %}selected{% endif %}>Upcoming</option>
-        <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Active</option>
-        <option value="ended" {% if request.GET.status == 'ended' %}selected{% endif %}>Ended</option>
-    </select>
-    <button type="submit">Filter</button>
-</form>
+{% extends "auctions/base.html" %}
 
-<ul>
-    {% for auction in auctions %}
-        <li>
-            <h2>{{ auction.auction_number }} - <span style="font-weight: bold; color: {% if auction.status == 'upcoming' %}blue{% elif auction.status == 'active' %}green{% else %}red{% endif %};">{{ auction.get_status_display }}</span></h2>
-            <ul>
-                {% for listing in auction.listings.all %}
-                    <li>
-                        <a href="{% url 'listing_detail' listing.id %}">{{ listing.title }}</a> - KES. {{ listing.base_price }}
-                    </li>
-                {% endfor %}
-            </ul>
-        </li>
-    {% empty %}
-        <li>No auctions available based on the selected filter.</li>
-    {% endfor %}
-</ul>
+{% block content %}
+<div class="auction-page">
+    <h1>Auctions</h1>
+    <form method="get" class="filter-form">
+        <label for="status">Filter by Status:</label>
+        <select id="status" name="status" class="status-select">
+            <option value="all" {% if not request.GET.status %}selected{% endif %}>All</option>
+            <option value="upcoming" {% if request.GET.status == 'upcoming' %}selected{% endif %}>Upcoming</option>
+            <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Active</option>
+            <option value="ended" {% if request.GET.status == 'ended' %}selected{% endif %}>Ended</option>
+        </select>
+        <button type="submit" class="filter-button">Filter</button>
+    </form>
+
+    <div class="auction-list">
+        {% if auctions %}
+            {% for auction in auctions %}
+                <div class="auction-item">
+                    <h2>{{ auction.auction_number }} - <span style="font-weight: bold; color: {% if auction.status == 'upcoming' %}blue{% elif auction.status == 'active' %}green{% else %}red{% endif %};">{{ auction.get_status_display }}</span></h2>
+                    <ul class="listing-list">
+                        {% for listing in auction.listings.all %}
+                            <li class="listing-item">
+                                <a href="{% url 'listing_detail' listing.id %}">{{ listing.title }}</a> - KES. {{ listing.base_price }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-auctions">No auctions available based on the selected filter.</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .auction-page {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+    }
+    .filter-form {
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+    }
+    .status-select {
+        margin-right: 10px;
+        padding: 5px;
+        font-size: 16px;
+    }
+    .filter-button {
+        padding: 5px 10px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    .auction-list {
+        margin-top: 20px;
+    }
+    .auction-item {
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+    }
+    .listing-list {
+        list-style-type: none;
+        padding: 0;
+    }
+    .listing-item {
+        margin: 5px 0;
+    }
+    .no-auctions {
+        color: #777;
+        text-align: center;
+        margin-top: 20px;
+    }
+</style>
+{% endblock %}

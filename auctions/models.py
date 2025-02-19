@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
@@ -20,15 +21,23 @@ class Auction(models.Model):
     def __str__(self):
         return self.auction_number
 
+    def clean(self):
+        # Ensure that start_time is before end_time
+        if self.start_time >= self.end_time:
+            raise ValidationError("Start time must be before end time.")
+
     def get_status(self):
         now = timezone.now()
         if now < self.start_time:
-            self.status = "upcoming"
+            new_status = "upcoming"
         elif self.start_time <= now <= self.end_time:
-            self.status = "active"
+            new_status = "active"
         else:
-            self.status = "ended"
-        self.save()
+            new_status = "ended"
+
+        if new_status != self.status:
+            self.status = new_status
+            self.save()
         return self.status
 
 

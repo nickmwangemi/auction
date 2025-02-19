@@ -31,7 +31,7 @@ class ListingDetailView(DetailView):
         return context
 
 
-class PlaceBidView(LoginRequiredMixin, FormView):
+class PlaceBidView(FormView):
     template_name = "auctions/place_bid.html"
     form_class = BidForm
 

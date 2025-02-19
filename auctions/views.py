@@ -100,8 +100,13 @@ class CreateListingView(LoginRequiredMixin, CreateView):
     def get_initial(self):
         # Set the initial auction based on the URL parameter
         initial = super().get_initial()
-        initial["auction"] = Auction.objects.get(id=self.kwargs["auction_id"])
+        initial["auction"] = self.get_auction()
         return initial
+
+    def get_auction(self):
+        if not hasattr(self, "_auction"):
+            self._auction = get_object_or_404(Auction, id=self.kwargs["auction_id"])
+        return self._auction
 
     def form_valid(self, form):
         # Retrieve the auction associated with the listing
@@ -120,7 +125,7 @@ class CreateListingView(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["auction"] = Auction.objects.get(id=self.kwargs["auction_id"])
+        context["auction"] = self.get_auction()
         return context
 
     def get_success_url(self):

@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import pywhatkit as kit
 from django.utils import timezone
 
@@ -5,12 +7,11 @@ from django.utils import timezone
 def send_auction_completion_message(
     phone_number, auction_id, item_description, winning_bid, winning_user
 ):
-    # Current time
+    # Current time adjusted by one minute to ensure the message is sent in the next minute
     now = timezone.now()
-    hour = now.hour
-    minute = (
-        now.minute + 1
-    )  # Adding one minute to ensure the message is sent in the next minute
+    next_time = now + timedelta(minutes=1)
+    hour = next_time.hour
+    minute = next_time.minute
 
     # Message content
     message = (

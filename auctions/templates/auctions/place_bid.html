@@ -1,3 +1,5 @@
+{% extends "auctions/base.html" %}
+
 {% block content %}
 <div>
     <div>
@@ -79,20 +81,28 @@
         <h3>Bid History</h3>
         {% with bids=listing.bids.all|dictsortreversed:"timestamp" %}
             {% if bids %}
-                <table border="5">
+                <table border="1" style="width:100%; border-collapse: collapse;">
                     <thead>
                         <tr>
-                            <th>Bidder</th>
-                            <th>Amount</th>
-                            <th>Date & Time</th>
+                            <th style="border: 1px solid black; padding: 8px;">Bidder</th>
+                            <th style="border: 1px solid black; padding: 8px;">Amount</th>
+                            <th style="border: 1px solid black; padding: 8px;">Date & Time</th>
+                            <th style="border: 1px solid black; padding: 8px;">Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for bid in bids %}
                             <tr>
-                                <td>{{ bid.user.username }}</td>
-                                <td>KES. {{ bid.amount }}</td>
-                                <td>{{ bid.timestamp|date:"M d, Y H:i" }}</td>
+                                <td style="border: 1px solid black; padding: 8px;">{{ bid.user.username }}</td>
+                                <td style="border: 1px solid black; padding: 8px;">KES. {{ bid.amount }}</td>
+                                <td style="border: 1px solid black; padding: 8px;">{{ bid.timestamp|date:"M d, Y H:i" }}</td>
+                                <td style="border: 1px solid black; padding: 8px;">
+                                    {% if bid.is_below_base_price %}
+                                        <span style="color: red;">Below Base Price</span>
+                                    {% else %}
+                                        Acceptable
+                                    {% endif %}
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>

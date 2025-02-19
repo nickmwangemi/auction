@@ -25,9 +25,9 @@ class ListingDetailView(DetailView):
         listing = self.get_object()
         bids = listing.bids.all()
         context["bids"] = bids
-        context['current_best_offer'] = bids.order_by('-amount').first()
-        context['winning_bid'] = listing.winning_bid()
-        context['auction_status'] = listing.auction.get_status()
+        context["current_best_offer"] = bids.order_by("-amount").first()
+        context["winning_bid"] = listing.winning_bid()
+        context["auction_status"] = listing.auction.get_status()
         return context
 
 
@@ -73,8 +73,8 @@ class HomeView(ListView):
 
     def get_queryset(self):
         queryset = Auction.objects.all()
-        status = self.request.GET.get('status')
-        if status and status != 'all':
+        status = self.request.GET.get("status")
+        if status and status != "all":
             queryset = queryset.filter(status=status)
         return queryset
 

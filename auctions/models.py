@@ -1,20 +1,21 @@
 from django.contrib.auth.models import User
+from django.db import models
 from django.utils import timezone
 
 
-from django.db import models
-
 class Auction(models.Model):
     AUCTION_STATUS_CHOICES = [
-        ('upcoming', 'Upcoming'),
-        ('active', 'Active'),
-        ('ended', 'Ended'),
+        ("upcoming", "Upcoming"),
+        ("active", "Active"),
+        ("ended", "Ended"),
     ]
 
     auction_number = models.CharField(max_length=50, unique=True)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
-    status = models.CharField(max_length=10, choices=AUCTION_STATUS_CHOICES, default='upcoming')
+    status = models.CharField(
+        max_length=10, choices=AUCTION_STATUS_CHOICES, default="upcoming"
+    )
 
     def __str__(self):
         return self.auction_number
@@ -22,14 +23,13 @@ class Auction(models.Model):
     def get_status(self):
         now = timezone.now()
         if now < self.start_time:
-            self.status = 'upcoming'
+            self.status = "upcoming"
         elif self.start_time <= now <= self.end_time:
-            self.status = 'active'
+            self.status = "active"
         else:
-            self.status = 'ended'
+            self.status = "ended"
         self.save()
         return self.status
-
 
 
 class Listing(models.Model):
@@ -46,12 +46,12 @@ class Listing(models.Model):
         return self.title
 
     def winning_bid(self):
-        return bids.order_by('-amount').first() if (bids := self.bids.all()) else None
+        return bids.order_by("-amount").first() if (bids := self.bids.all()) else None
 
     def get_time_progress(self):
-        if self.auction.status == 'upcoming':
+        if self.auction.status == "upcoming":
             return 0
-        elif self.auction.status == 'ended':
+        elif self.auction.status == "ended":
             return 100
 
         total_duration = (self.end_time - self.start_time).total_seconds()

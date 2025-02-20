@@ -20,18 +20,32 @@
 
     <h2>Listings</h2>
     {% if listings %}
-         <ul class="listing-list">
-            {% if not auction.listings.count %}
-                <li>No listings available.</li>
-            {% else %}
-                <span>{{ auction.listings.count }} listing{{ auction.listings.count|pluralize:'s' }} available.</span>
+        <table class="listing-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Base Price</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
                 {% for listing in auction.listings.all %}
-                    <li class="listing-item">
-                        <a href="{% url 'listing_detail' listing.id %}">{{ listing.title }}</a> - KES. {{ listing.base_price }}
-                    </li>
+                    <tr class="listing-row">
+                        <td><a href="{% url 'listing_detail' listing.id %}">{{ listing.title }}</a></td>
+                        <td>KES. {{ listing.base_price }}</td>
+                        <td>{{ listing.start_time|date:"M d, Y H:i" }}</td>
+                        <td>{{ listing.end_time|date:"M d, Y H:i" }}</td>
+                        <td><a href="{% url 'place_bid' listing.id %}" class="action-link">Place Bid</a></td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="no-listings">No listings available.</td>
+                    </tr>
                 {% endfor %}
-            {% endif %}
-        </ul>
+            </tbody>
+        </table>
     {% else %}
         <p>No listings available for this auction.</p>
     {% endif %}
@@ -71,12 +85,29 @@
     .status-ended {
         color: red;
     }
-    .listing-list {
-        list-style-type: none;
-        padding: 0;
+    .listing-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
     }
-    .listing-item {
-        margin: 5px 0;
+    .listing-table th, .listing-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    .listing-table th {
+        background-color: #f2f2f2;
+    }
+    .action-link {
+        color: #007bff;
+        text-decoration: none;
+    }
+    .action-link:hover {
+        text-decoration: underline;
+    }
+    .no-listings {
+        text-align: center;
+        padding: 10px;
     }
 </style>
 {% endblock %}

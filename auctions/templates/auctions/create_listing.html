@@ -4,7 +4,7 @@
 <div class="create-listing-page">
     <h1>Create a Listing for Auction: {{ auction.auction_number }}</h1>
 
-    <!-- Link to the auctions page -->
+    <!-- Navigation Links -->
     <div class="navigation-links">
         <a href="{% url 'home' %}" class="nav-link">View All Auctions</a>
         <a href="{% url 'auction_detail' view.kwargs.auction_id %}" class="nav-link">Back to Auction Details</a>

@@ -4,6 +4,7 @@
 <div class="auction-page">
     <h1>Auctions</h1>
 
+    <!-- Filter Form -->
     <form method="get" class="filter-form">
         <label for="status">Filter by Status:</label>
         <select id="status" name="status" class="status-select">
@@ -15,13 +16,18 @@
         <button type="submit" class="filter-button">Filter</button>
     </form>
 
+    <!-- Auction List -->
     <div class="auction-list">
         {% if auctions %}
             {% for auction in auctions %}
                 <div class="auction-item">
                     <div class="auction-header">
                         <h2>
-                        <a href="{% url 'auction_detail' auction.id %}">{{ auction.auction_number }}</a> - <span style="font-weight: bold; color: {% if auction.status == 'upcoming' %}blue{% elif auction.status == 'active' %}green{% else %}red{% endif %};">{{ auction.get_status_display }}</span></h2>
+                            <a href="{% url 'auction_detail' auction.id %}" class="auction-title">{{ auction.auction_number }}</a> -
+                            <span class="status-label {% if auction.status == 'upcoming' %}status-upcoming{% elif auction.status == 'active' %}status-active{% else %}status-ended{% endif %}">
+                                {{ auction.get_status_display }}
+                            </span>
+                        </h2>
                         {% if auction.status == 'upcoming' or auction.status == 'active' %}
                             <a href="{% url 'create_listing' auction.id %}" class="create-auction-link">Set Auction</a>
                         {% endif %}
@@ -66,6 +72,13 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 10px;
+    }
+    .auction-title {
+        text-decoration: none;
+        color: inherit;
+    }
+    .auction-title:hover {
+        text-decoration: underline;
     }
     .create-auction-link {
         padding: 5px 10px;
@@ -113,6 +126,18 @@
         color: #777;
         text-align: center;
         margin-top: 20px;
+    }
+    .status-label {
+        font-weight: bold;
+    }
+    .status-upcoming {
+        color: blue;
+    }
+    .status-active {
+        color: green;
+    }
+    .status-ended {
+        color: red;
     }
 </style>
 {% endblock %}

@@ -3,6 +3,20 @@
 <head>
     <title>{% block title %}Digital Trading Platform{% endblock %}</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
         .messages {
             position: relative;
             padding: 10px;
@@ -26,6 +40,14 @@
                 visibility: hidden;
             }
         }
+        .nav-link {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -43,7 +65,7 @@
     </div>
 
     <script>
-        // Automatically hide messages after 5 seconds
+        // Automatically hide messages after 30 seconds
         document.addEventListener('DOMContentLoaded', function() {
             const messages = document.querySelectorAll('.messages .fade-out');
             messages.forEach(message => {

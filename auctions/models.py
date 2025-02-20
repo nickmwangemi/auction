@@ -1,7 +1,13 @@
+import logging
+
+import requests
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
+
+logger = logging.getLogger(__name__)
 
 
 class Auction(models.Model):
@@ -17,6 +23,8 @@ class Auction(models.Model):
     status = models.CharField(
         max_length=10, choices=AUCTION_STATUS_CHOICES, default="upcoming"
     )
+    # Flag to track if a notification has already been sent
+    notification_sent = models.BooleanField(default=False)
 
     def __str__(self):
         return self.auction_number
@@ -35,10 +43,33 @@ class Auction(models.Model):
         else:
             new_status = "ended"
 
+        # If status has changed, update and save.
         if new_status != self.status:
             self.status = new_status
             self.save()
         return self.status
+
+    def notify_auction_end(self):
+        # Only send notification if it hasn't been sent already.
+        if self.notification_sent:
+            return
+
+        message_data = {
+            "auction_number": self.auction_number,
+            "title": f"Auction {self.auction_number} has ended.",
+            "winning_bid": "",  # Modify if needed.
+            "winning_user": "",  # Modify if needed.
+        }
+        try:
+            url = settings.WHATSAPP_SERVICE_URL
+            response = requests.post(url, json=message_data, timeout=5)
+            response.raise_for_status()
+            # Mark the auction as notified if successful.
+            self.notification_sent = True
+            self.save(update_fields=["notification_sent"])
+            logger.info(f"WhatsApp notification sent for auction {self.auction_number}")
+        except Exception as e:
+            logger.error("Error sending WhatsApp notification", exc_info=e)
 
 
 class Listing(models.Model):

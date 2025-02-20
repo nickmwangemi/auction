@@ -159,3 +159,6 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
+
+WHATSAPP_SERVICE_URL = "http://localhost:3000/notify"

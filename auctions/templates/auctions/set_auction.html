@@ -6,13 +6,23 @@
 
     <!-- Backlink to the homepage or auction list -->
     <div class="backlink">
-        <a href="{% url 'home' %}">Back to Auctions</a>
+        <a href="{% url 'home' %}" class="nav-link">Back to Auctions</a>
     </div>
 
     <form method="post" class="auction-form">
         {% csrf_token %}
         <div class="form-group">
-            {{ form.as_p }}
+            {% for field in form %}
+                <div class="form-row">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    <div class="form-input">
+                        {{ field }}
+                        {% if field.errors %}
+                            <p class="error">{{ field.errors.as_text }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
         </div>
         <button type="submit" class="submit-button">Create Auction</button>
     </form>
@@ -21,21 +31,23 @@
 <style>
     .create-auction-page {
         max-width: 600px;
-        margin: auto;
+        margin: 50px auto;
         padding: 20px;
         border: 1px solid #ddd;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
     }
     .backlink {
         margin-bottom: 20px;
         text-align: right;
     }
-    .backlink a {
+    .nav-link {
         text-decoration: none;
         color: #007bff;
+        font-weight: bold;
     }
-    .backlink a:hover {
+    .nav-link:hover {
         text-decoration: underline;
     }
     .auction-form {
@@ -45,6 +57,29 @@
     .form-group {
         margin-bottom: 15px;
     }
+    .form-row {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+    }
+    .form-label {
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    .form-input {
+        position: relative;
+    }
+    .form-input input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    .error {
+        color: red;
+        font-size: 12px;
+        margin-top: 5px;
+    }
     .submit-button {
         padding: 10px 20px;
         background-color: #007bff;
@@ -53,6 +88,7 @@
         border-radius: 5px;
         cursor: pointer;
         font-size: 16px;
+        align-self: center;
     }
     .submit-button:hover {
         background-color: #0056b3;

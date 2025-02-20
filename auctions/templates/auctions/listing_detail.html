@@ -56,7 +56,7 @@
 
     <!-- Navigation Links -->
     <div class="navigation-links">
-        {% if not listing.auction.status == 'ended' %}
+        {% if listing.auction.status != 'ended' %}
             <a href="{% url 'place_bid' listing.id %}" class="nav-link">Place Bid</a>
         {% endif %}
         <a href="{% url 'home' %}" class="nav-link">Back to Auctions</a>
@@ -69,6 +69,10 @@
         max-width: 800px;
         margin: auto;
         padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
     }
     .navigation-links {
         display: flex;
@@ -87,11 +91,15 @@
     .offers-table {
         width: 100%;
         border-collapse: collapse;
+        margin-top: 20px;
     }
     .offers-table th, .offers-table td {
-        border: 1px solid black;
+        border: 1px solid #ddd;
         padding: 8px;
         text-align: left;
+    }
+    .offers-table th {
+        background-color: #f2f2f2;
     }
     .status-label {
         font-weight: bold;

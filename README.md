@@ -3,16 +3,18 @@
 ## Technology Choices
 
 - **Backend Framework**: Django
-  - Chosen for its robustness, scalability, and built-in admin interface.
+    - Chosen for its robustness, scalability, and built-in admin interface.
 - **Database**: SQLite
-  - Used in the deployed version available at [https://nickmwangemi.pythonanywhere.com/](https://nickmwangemi.pythonanywhere.com/) due to the limitations of the free-tier on PythonAnywhere.
-  - Can be replaced with PostgreSQL or MySQL for production.
+    - Used in the deployed version available
+      at [https://nickmwangemi.pythonanywhere.com/](https://nickmwangemi.pythonanywhere.com/) due to the limitations of
+      the free-tier on PythonAnywhere.
+    - Can be replaced with PostgreSQL or MySQL for production.
 - **API Framework**: Django REST Framework (DRF)
-  - Used to create a RESTful API for the application, allowing for easy integration with other services.
+    - Used to create a RESTful API for the application, allowing for easy integration with other services.
 - **Templating Engine**: Django Template Language
-  - Used for rendering HTML dynamically.
-- **WhatsApp Integration**: Yowsup Library
-  - Used for sending WhatsApp notifications.
+    - Used for rendering HTML dynamically.
+- **WhatsApp Integration**: whatsapp-web.js
+    - Used for sending WhatsApp notifications via a Node.js environment.
 
 ## Setup and Running the Application
 
@@ -20,7 +22,7 @@
 
 - Python 3.6+
 - Django 3.2+
-- Yowsup Library for WhatsApp Integration
+- Node.js and npm for WhatsApp Integration
 
 ### Steps
 
@@ -58,27 +60,61 @@
    ```
 
 7. **Access the Application**:
-   - Open your web browser and go to `http://127.0.0.1:8000/`.
+    - Open your web browser and go to `http://127.0.0.1:8000/`.
 
 ### Deployed Version
 
-- The deployed version of the application is available at [https://nickmwangemi.pythonanywhere.com/](https://nickmwangemi.pythonanywhere.com/).
+- The deployed version of the application is available
+  at [https://nickmwangemi.pythonanywhere.com/](https://nickmwangemi.pythonanywhere.com/).
 - Due to the limitations of the free-tier on PythonAnywhere, SQLite is used as the database.
 
-### WhatsApp Integration Setup
+### Running the WhatsApp Notification Service
 
-1. **Install Yowsup**:
+### Prerequisites
+
+- Node.js and npm installed
+
+### Steps
+
+1. **Navigate to the `whatsapp-notifier` directory:**
    ```bash
-   pip install yowsup2
+    cd whatsapp-notifier
    ```
-
-2. **Configure WhatsApp Credentials**:
-   - Add your WhatsApp credentials (phone number and password) in the script.
-
-3. **Run the WhatsApp Notification Script**:
+2. **Install Dependencies:**
+    ```bash
+     npm install
+    ```
+3. **Set the Environment Variable:**
+   Ensure that the `WHATSAPP_PHONE_NUMBER` environment variable is set with the recipient's phone number. You can set it
+   in your terminal session or in a .env file.
    ```bash
-   python whatsapp_notification.py
+    export WHATSAPP_PHONE_NUMBER=+1234567890
    ```
+4. **Run the Notification Service:**
+    ```bash
+   node notifier.js
+   ```
+5. **Scan the QR Code:**
+
+Upon running the script, a QR code will be generated. Scan this QR code with your dedicated WhatsApp account to
+authenticate.
+
+### Known Limitations
+
+- **Rate Limiting**: Be aware of WhatsApp's rate limits to avoid being blocked.
+- **Dependency on WhatsApp Web**: The integration relies on WhatsApp Web, which requires manual QR code scanning for
+  authentication.
+- **Session Management**: Maintaining a session with WhatsApp Web can be challenging, requiring re-authentication if the
+  session expires.
+- **Compatibility**: The library may not be fully compatible with all WhatsApp features, especially after updates to the
+  WhatsApp web interface.
+- **Security Concerns**: Using unofficial APIs can pose security risks and may violate WhatsApp's terms of service.
+- **Legal Considerations**: Automated messaging may have legal implications, especially for commercial use.
+- **No Official Support**: As an unofficial API, there is no official support, relying instead on community and
+  maintainer updates.
+- **Performance Issues**: Handling a large volume of messages can lead to performance issues.
+- **Limited to Personal Use**: Best suited for personal projects or testing due to WhatsApp's terms of service
+  restrictions.
 
 ## Assumptions
 
@@ -92,19 +128,4 @@
 - **Advanced Bidding Features**: Features like proxy bidding or bid increments are not implemented.
 - **Previous Price and Volumes**: Simulated for extra credit but not fully integrated into the UI.
 
-## WhatsApp Integration Details
-
-### Library Used
-
-- **Yowsup**: A Python library for interacting with WhatsApp.
-
-### Setup Instructions
-
-1. **Register with Yowsup**: Follow the Yowsup documentation to register your phone number.
-2. **Configure Credentials**: Update the script with your WhatsApp phone number and password.
-3. **Run the Script**: Execute the script to send notifications.
-
-### Known Limitations
-
-- **Rate Limiting**: Be aware of WhatsApp's rate limits to avoid being blocked.
-- **Dependency on Yowsup**: The integration relies on Yowsup, which may have its own limitations and dependencies.
+```

@@ -88,7 +88,7 @@
    Ensure that the `WHATSAPP_PHONE_NUMBER` environment variable is set with the recipient's phone number. You can set it
    in your terminal session or in a .env file.
    ```bash
-    export WHATSAPP_PHONE_NUMBER=+1234567890
+    export WHATSAPP_PHONE_NUMBER=1234567890
    ```
 4. **Run the Notification Service:**
     ```bash

@@ -85,6 +85,15 @@ class Listing(models.Model):
     def __str__(self):
         return self.title
 
+    def clean(self):
+        # Ensure listing dates fall within auction dates
+        if self.start_time < self.auction.start_time:
+            raise ValidationError("Listing start time must be after the auction start time.")
+        if self.end_time > self.auction.end_time:
+            raise ValidationError("Listing end time must be before the auction end time.")
+        if self.start_time >= self.end_time:
+            raise ValidationError("Listing end time must be after the listing start time.")
+
     def winning_bid(self):
         return bids.order_by("-amount").first() if (bids := self.bids.all()) else None
 
@@ -98,6 +107,7 @@ class Listing(models.Model):
         elapsed = (timezone.now() - self.start_time).total_seconds()
         progress = (elapsed / total_duration) * 100
         return min(max(progress, 0), 100)
+
 
 
 class Bid(models.Model):

@@ -35,10 +35,15 @@
             <p><strong>Started:</strong> {{ listing.start_time|date:"M d, Y H:i" }}</p>
             <p><strong>Ends:</strong> {{ listing.end_time|date:"M d, Y H:i" }}</p>
         </div>
-        <div class="progress-bar">
-            {% with time_progress=listing.get_time_progress %}
-            <div class="progress" style="width: {{ time_progress }}%;"></div>
-            {% endwith %}
+        <div class="progress-container">
+            <label class="progress-label">Auction Progress</label>
+            <div class="progress-bar">
+                {% with time_progress=listing.get_time_progress %}
+                <div class="progress" style="width: {{ time_progress }}%;">
+                    <span class="progress-text">{{ time_progress|floatformat:0 }}%</span>
+                </div>
+                {% endwith %}
+            </div>
         </div>
     </div>
 
@@ -136,15 +141,32 @@
     .listing-timing {
         margin-bottom: 20px;
     }
+    .progress-container {
+        margin-top: 20px;
+    }
+    .progress-label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+    }
     .progress-bar {
         background-color: #e0e0e0;
         border-radius: 5px;
         overflow: hidden;
-        margin-top: 10px;
+        position: relative;
     }
     .progress {
         background-color: #007bff;
         height: 20px;
+        position: relative;
+    }
+    .progress-text {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-weight: bold;
     }
     .bid-form {
         display: flex;

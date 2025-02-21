@@ -75,7 +75,7 @@ class Auction(models.Model):
         message_data = {
             "auction_number": self.auction_number,
             "title": f"Auction {self.auction_number} has ended.",
-            "winning_bid": winning_bid.amount if winning_bid else "No winning bid.",
+            "winning_bid": float(winning_bid.amount) if winning_bid else "No winning bid.",
             "winning_user": (
                 winning_user.username if winning_user else "No winning user."
             ),

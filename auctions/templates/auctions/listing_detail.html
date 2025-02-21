@@ -28,9 +28,9 @@
         <tbody>
             {% for bid in bids %}
                 <tr>
-                    <td>KES. {{ bid.amount }}</td>
+                    <td>KES. {{ bid.amount|floatformat:2 }}</td>
                     <td>{{ bid.user.username }}</td>
-                    <td>{{ bid.timestamp }}</td>
+                    <td>{{ bid.timestamp|date:"l, d M Y \a\t P" }}</td>
                     <td>
                         {% if bid.is_below_base_price %}
                             <span class="status-below-base">Below Base Price</span>
@@ -47,22 +47,22 @@
         </tbody>
     </table>
 
-    {% if listing.auction.status == 'ended' %}
-        <h2>Winning Bid</h2>
-        {% with winning_bid=listing.winning_bid %}
-            {% if winning_bid %}
-                <p>KES. {{ winning_bid.amount }} by {{ winning_bid.user.username }} on {{ winning_bid.timestamp }}</p>
-            {% else %}
-                <p>No winning bid was placed for this auction.</p>
-            {% endif %}
-        {% endwith %}
-    {% elif listing.auction.status == 'active' %}
+    {% if listing.auction.status == 'active' %}
         <h2>Current Best Offer</h2>
         {% with current_best_offer=listing.winning_bid %}
             {% if current_best_offer %}
-                <p>KES. {{ current_best_offer.amount }} by {{ current_best_offer.user.username }} on {{ current_best_offer.timestamp }}</p>
+                <p>KES. {{ current_best_offer.amount|floatformat:2 }} by {{ current_best_offer.user.username }} on {{ current_best_offer.timestamp|date:"l, d M Y \a\t P" }}</p>
             {% else %}
                 <p>No bids have been placed yet.</p>
+            {% endif %}
+        {% endwith %}
+    {% elif listing.auction.status == 'ended' %}
+        <h2>Winning Bid</h2>
+        {% with winning_bid=listing.winning_bid %}
+            {% if winning_bid %}
+                <p>KES. {{ winning_bid.amount|floatformat:2 }} by {{ winning_bid.user.username }} on {{ winning_bid.timestamp|date:"l, d M Y \a\t P" }}</p>
+            {% else %}
+                <p>No winning bid was placed for this auction.</p>
             {% endif %}
         {% endwith %}
     {% endif %}

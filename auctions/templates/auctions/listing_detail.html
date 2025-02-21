@@ -47,11 +47,24 @@
         </tbody>
     </table>
 
-    <h2>Current Best Offer</h2>
-    {% if current_best_offer %}
-        <p>KES. {{ current_best_offer.amount }} by {{ current_best_offer.user.username }}</p>
-    {% else %}
-        <p>There is no current best offer.</p>
+    {% if listing.auction.status == 'ended' %}
+        <h2>Winning Bid</h2>
+        {% with winning_bid=listing.winning_bid %}
+            {% if winning_bid %}
+                <p>KES. {{ winning_bid.amount }} by {{ winning_bid.user.username }} on {{ winning_bid.timestamp }}</p>
+            {% else %}
+                <p>No winning bid was placed for this auction.</p>
+            {% endif %}
+        {% endwith %}
+    {% elif listing.auction.status == 'active' %}
+        <h2>Current Best Offer</h2>
+        {% with current_best_offer=listing.winning_bid %}
+            {% if current_best_offer %}
+                <p>KES. {{ current_best_offer.amount }} by {{ current_best_offer.user.username }} on {{ current_best_offer.timestamp }}</p>
+            {% else %}
+                <p>No bids have been placed yet.</p>
+            {% endif %}
+        {% endwith %}
     {% endif %}
 
     <!-- Navigation Links -->

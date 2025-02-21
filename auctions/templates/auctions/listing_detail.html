@@ -15,6 +15,15 @@
         </span>
     </h2>
 
+    <h2>Winning Bid</h2>
+    {% with winning_bid=listing.winning_bid %}
+        {% if winning_bid %}
+            <p>KES. {{ winning_bid.amount }} by {{ winning_bid.user.username }} on {{ winning_bid.timestamp }}</p>
+        {% else %}
+            <p>No bids have been placed yet.</p>
+        {% endif %}
+    {% endwith %}
+
     <h2>Offers Placed</h2>
     <table class="offers-table">
         <thead>
@@ -47,22 +56,42 @@
         </tbody>
     </table>
 
-    <h2>Current Best Offer</h2>
-    {% if current_best_offer and current_best_offer.amount > listing.base_price %}
-        <p>KES. {{ current_best_offer.amount }} by {{ current_best_offer.user.username }}</p>
-    {% elif current_best_offer %}
-        <p>The current best offer is below the base price.</p>
+    {% if listing.auction.status == 'active' %}
+        <form method="post" class="bid-form">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="form-errors">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <p class="error">{{ field.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="submit-button">Place Bid</button>
+        </form>
     {% else %}
-        <p>There is no current best offer.</p>
+        <div class="auction-status-message">
+            <p>
+                {% if listing.auction.status == 'upcoming' %}
+                    This auction hasn't started yet. Please check back when it's active.
+                {% else %}
+                    This auction has ended. No more bids can be placed.
+                {% endif %}
+            </p>
+        </div>
     {% endif %}
 
-    <!-- Navigation Links -->
     <div class="navigation-links">
-        {% if listing.auction.status != 'ended' %}
-            <a href="{% url 'place_bid' listing.id %}" class="nav-link">Place Bid</a>
-        {% endif %}
-        <a href="{% url 'home' %}" class="nav-link">Back to Auctions</a>
         <a href="{% url 'auction_detail' listing.auction.id %}" class="nav-link">Back to Auction Details</a>
+        <a href="{% url 'home' %}" class="nav-link">Back to Auctions</a>
     </div>
 </div>
 
@@ -85,7 +114,7 @@
         text-decoration: none;
         color: #007bff;
         font-weight: bold;
-        margin-right: 10px;
+        margin-right: 15px; /* Add space between links */
     }
     .nav-link:last-child {
         margin-right: 0; /* Remove margin from the last link */

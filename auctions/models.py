@@ -54,12 +54,33 @@ class Auction(models.Model):
         if self.notification_sent:
             return
 
+        # Determine the winning bid and user
+        winning_bid = None
+        winning_user = None
+
+        for listing in self.listings.all():
+            bid = listing.winning_bid()
+            if bid and (
+                winning_bid is None
+                or bid.amount > winning_bid.amount
+                or (
+                    bid.amount == winning_bid.amount
+                    and bid.timestamp < winning_bid.timestamp
+                )
+            ):
+                winning_bid = bid
+                winning_user = bid.user
+
+        # Prepare the message data
         message_data = {
             "auction_number": self.auction_number,
             "title": f"Auction {self.auction_number} has ended.",
-            "winning_bid": "",  # Modify if needed.
-            "winning_user": "",  # Modify if needed.
+            "winning_bid": winning_bid.amount if winning_bid else "No winning bid.",
+            "winning_user": (
+                winning_user.username if winning_user else "No winning user."
+            ),
         }
+
         try:
             url = settings.WHATSAPP_SERVICE_URL
             response = requests.post(url, json=message_data, timeout=5)
@@ -101,7 +122,9 @@ class Listing(models.Model):
             )
 
     def winning_bid(self):
-        return bids.order_by("-amount").first() if (bids := self.bids.all()) else None
+        # Get all bids for the listing, ordered by amount (descending) and timestamp (ascending)
+        bids = self.bids.all().order_by("-amount", "timestamp")
+        return bids.first() if bids else None
 
     def get_time_progress(self):
         if self.auction.status == "upcoming":

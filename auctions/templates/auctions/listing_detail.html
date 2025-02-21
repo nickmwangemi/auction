@@ -48,8 +48,10 @@
     </table>
 
     <h2>Current Best Offer</h2>
-    {% if current_best_offer %}
+    {% if current_best_offer and current_best_offer.amount > listing.base_price %}
         <p>KES. {{ current_best_offer.amount }} by {{ current_best_offer.user.username }}</p>
+    {% elif current_best_offer %}
+        <p>The current best offer is below the base price.</p>
     {% else %}
         <p>There is no current best offer.</p>
     {% endif %}
@@ -84,6 +86,9 @@
         color: #007bff;
         font-weight: bold;
         margin-right: 10px;
+    }
+    .nav-link:last-child {
+        margin-right: 0; /* Remove margin from the last link */
     }
     .nav-link:hover {
         text-decoration: underline;

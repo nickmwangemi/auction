@@ -58,7 +58,7 @@ class Auction(models.Model):
         winning_bid = None
         winning_user = None
 
-        for listing in self.listings.all():
+        for listing in self.listings.prefetch_related('bids'):
             bid = listing.winning_bid()
             if bid and (
                 winning_bid is None

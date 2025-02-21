@@ -126,6 +126,6 @@ authenticate.
 
 - **Payment Processing**: The settlement stage does not include actual payment processing.
 - **Advanced Bidding Features**: Features like proxy bidding or bid increments are not implemented.
-- **Previous Price and Volumes**: Simulated for extra credit but not fully integrated into the UI.
+- **Previous Price and Volumes**: Not implemented.
 
 ```

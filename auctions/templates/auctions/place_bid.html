@@ -206,13 +206,18 @@
         color: red;
     }
     .navigation-links {
+        display: flex;
+        justify-content: space-between;
         margin-top: 20px;
-        text-align: center;
     }
     .nav-link {
         text-decoration: none;
         color: #007bff;
         font-weight: bold;
+        margin-right: 15px; /* Add space between links */
+    }
+    .nav-link:last-child {
+        margin-right: 0; /* Remove margin from the last link */
     }
     .nav-link:hover {
         text-decoration: underline;

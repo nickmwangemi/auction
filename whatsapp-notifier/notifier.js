@@ -35,6 +35,7 @@ app.post('/notify', async (req, res) => {
 
     // Read phone number from environment variable.
     const phoneNumber = process.env.WHATSAPP_PHONE_NUMBER;
+    console.log(`Phone number: ${phoneNumber}`);
     if (!phoneNumber) {
         console.error("Environment variable WHATSAPP_PHONE_NUMBER is not set.");
         return res.status(500).json({ error: 'WhatsApp phone number not configured' });
